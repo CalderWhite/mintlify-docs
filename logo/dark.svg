@@ -1,8 +1,8 @@
 <svg width="240" height="32" viewBox="0 0 240 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g transform="translate(0, 4) scale(0.6)">
-    <path d="M.76 34.6L12.1 19.26a1 1 0 0 1 1.09-.37l11.65 3.4a1 1 0 0 0 1.17-.5L37.1.6a1 1 0 0 1 1.89.46V33a4 4 0 0 1-4 4H1.97a1.5 1.5 0 0 1-1.2-2.4z" fill="#F3E8FF"/>
+    <path d="M.76 34.6L12.1 19.26a1 1 0 0 1 1.09-.37l11.65 3.4a1 1 0 0 0 1.17-.5L37.1.6a1 1 0 0 1 1.89.46V33a4 4 0 0 1-4 4H1.97a1.5 1.5 0 0 1-1.2-2.4z" fill="#FFFFFF"/>
   </g>
-  <text x="30" y="24" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#F3E8FF">
+  <text x="30" y="24" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#FFFFFF">
     PredictionData.dev
   </text>
 </svg>
