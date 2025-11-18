@@ -26,9 +26,9 @@
               {
                 "group": "Polymarket",
                 "pages": [
+                  "datasets/polymarket/onchain-fills",
                   "datasets/polymarket/order-books",
-                  "datasets/polymarket/trades",
-                  "datasets/polymarket/onchain-fills"
+                  "datasets/polymarket/trades"
                 ]
               }
             ]

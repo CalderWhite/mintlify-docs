@@ -9,13 +9,13 @@ Tick-by-tick order book reconstructions from websocket feeds and REST data. Each
 row represents the full order book state at that timestamp.
 
 
-The orderbook is reconstructed from multiple redundant websockets to ensure zero data
+The order book is reconstructed from multiple redundant websockets to ensure zero data
 loss. Three separate datastreams are merged: `price_change` messages, `book`
 messages, and a scheduled download of all books from the REST API every 5 minutes.
 This way in the **highly unlikely** event the book becomes slightly out of sync,
 every 5 minutes it is guaranteed to be correct.
 
-If you plan on downloading high volumes of orderbook data, please reach out! We
+If you plan on downloading high volumes of order book data, please reach out! We
 support bulk parquet exports which will allow you to avoid parsing text. Email:
 calder@predictiondata.dev.
 
@@ -48,7 +48,7 @@ id so you don't need to look up the clob token id through Polymarket's API.
 ```python Python
 import requests
 
-def download_orderbook_data(market_slug, outcome, date_str, api_key):
+def download_order book_data(market_slug, outcome, date_str, api_key):
     url = f"http://datasets.predictiondata.dev/polymarket/books/{market_slug}/{outcome}/{date_str}.csv.gz"
     params = {'slug': 'true', 'apikey': api_key}
     
@@ -66,14 +66,14 @@ if __name__ == "__main__":
     outcome = "YES"
     date_str = "2025-11-16"
     
-    download_orderbook_data(market_slug, outcome, date_str, api_key)
+    download_order book_data(market_slug, outcome, date_str, api_key)
 ```
 
 ```javascript Node.js
 const axios = require('axios');
 const fs = require('fs');
 
-async function downloadOrderbookData(marketSlug, outcome, dateStr, apiKey) {
+async function downloadorder bookData(marketSlug, outcome, dateStr, apiKey) {
     const url = `http://datasets.predictiondata.dev/polymarket/books/${marketSlug}/${outcome}/${dateStr}.csv.gz`;
     
     const response = await axios.get(url, {
@@ -93,7 +93,7 @@ async function downloadOrderbookData(marketSlug, outcome, dateStr, apiKey) {
     const dateStr = "2025-11-16";
     
     try {
-        await downloadOrderbookData(marketSlug, outcome, dateStr, apiKey);
+        await downloadorder bookData(marketSlug, outcome, dateStr, apiKey);
     } catch (error) {
         console.error("Error downloading data:", error.message);
     }
@@ -105,7 +105,7 @@ use reqwest;
 use std::fs::File;
 use std::io::Write;
 
-async fn download_orderbook_data(
+async fn download_order book_data(
     market_slug: &str,
     outcome: &str,
     date_str: &str,
@@ -140,7 +140,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let outcome = "YES";
     let date_str = "2025-11-16";
     
-    download_orderbook_data(market_slug, outcome, date_str, api_key).await?;
+    download_order book_data(market_slug, outcome, date_str, api_key).await?;
     Ok(())
 }
 ```
@@ -156,7 +156,7 @@ import (
     "os"
 )
 
-func downloadOrderbookData(marketSlug, outcome, dateStr, apiKey string) error {
+func downloadorder bookData(marketSlug, outcome, dateStr, apiKey string) error {
     baseURL := fmt.Sprintf(
         "http://datasets.predictiondata.dev/polymarket/books/%s/%s/%s.csv.gz",
         marketSlug, outcome, dateStr,
@@ -196,7 +196,7 @@ func main() {
     outcome := "YES"
     dateStr := "2025-11-16"
     
-    if err := downloadOrderbookData(marketSlug, outcome, dateStr, apiKey); err != nil {
+    if err := downloadorder bookData(marketSlug, outcome, dateStr, apiKey); err != nil {
         fmt.Printf("Error downloading data: %v\n", err)
     }
 }
@@ -218,7 +218,7 @@ curl -G "http://datasets.predictiondata.dev/polymarket/books/ramp-ipo-in-2025/YE
 ```python Python
 import requests
 
-def download_orderbook_data_by_token(token_id, date_str, api_key):
+def download_order book_data_by_token(token_id, date_str, api_key):
     url = f"http://datasets.predictiondata.dev/polymarket/books/{token_id}/{date_str}.csv.gz"
     params = {'apikey': api_key}
     
@@ -235,14 +235,14 @@ if __name__ == "__main__":
     token_id = "6535996220481600525438454491949371553057652243233032166205012948847090204871"
     date_str = "2025-11-16"
     
-    download_orderbook_data_by_token(token_id, date_str, api_key)
+    download_order book_data_by_token(token_id, date_str, api_key)
 ```
 
 ```javascript Node.js
 const axios = require('axios');
 const fs = require('fs');
 
-async function downloadOrderbookDataByToken(tokenId, dateStr, apiKey) {
+async function downloadorder bookDataByToken(tokenId, dateStr, apiKey) {
     const url = `http://datasets.predictiondata.dev/polymarket/books/${tokenId}/${dateStr}.csv.gz`;
     
     const response = await axios.get(url, {
@@ -261,7 +261,7 @@ async function downloadOrderbookDataByToken(tokenId, dateStr, apiKey) {
     const dateStr = "2025-11-16";
     
     try {
-        await downloadOrderbookDataByToken(tokenId, dateStr, apiKey);
+        await downloadorder bookDataByToken(tokenId, dateStr, apiKey);
     } catch (error) {
         console.error("Error downloading data:", error.message);
     }
@@ -273,7 +273,7 @@ use reqwest;
 use std::fs::File;
 use std::io::Write;
 
-async fn download_orderbook_data_by_token(
+async fn download_order book_data_by_token(
     token_id: &str,
     date_str: &str,
     api_key: &str,
@@ -306,7 +306,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let token_id = "6535996220481600525438454491949371553057652243233032166205012948847090204871";
     let date_str = "2025-11-16";
     
-    download_orderbook_data_by_token(token_id, date_str, api_key).await?;
+    download_order book_data_by_token(token_id, date_str, api_key).await?;
     Ok(())
 }
 ```
@@ -322,7 +322,7 @@ import (
     "os"
 )
 
-func downloadOrderbookDataByToken(tokenID, dateStr, apiKey string) error {
+func downloadorder bookDataByToken(tokenID, dateStr, apiKey string) error {
     baseURL := fmt.Sprintf(
         "http://datasets.predictiondata.dev/polymarket/books/%s/%s.csv.gz",
         tokenID, dateStr,
@@ -360,7 +360,7 @@ func main() {
     tokenID := "6535996220481600525438454491949371553057652243233032166205012948847090204871"
     dateStr := "2025-11-16"
     
-    if err := downloadOrderbookDataByToken(tokenID, dateStr, apiKey); err != nil {
+    if err := downloadorder bookDataByToken(tokenID, dateStr, apiKey); err != nil {
         fmt.Printf("Error downloading data: %v\n", err)
     }
 }

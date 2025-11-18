@@ -24,11 +24,336 @@ This is generated from the `OrderFilled` event, since `OrdersMatched` loses info
 
 ### Using Market Slug + Outcome
 
-`https://datasets.predictiondata.dev/polymarket/onchain/fills/{market-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY`
+<CodeGroup>
+
+```python Python
+import requests
+
+def download_onchain_fills(market_slug, outcome, date_str, api_key):
+    url = f"https://datasets.predictiondata.dev/polymarket/onchain/fills/{market_slug}/{outcome}/{date_str}.csv.gz"
+    params = {'slug': 'true', 'apikey': api_key}
+    
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    
+    with open(f'{market_slug}_{outcome}_{date_str}_fills.csv.gz', 'wb') as f:
+        f.write(response.content)
+    
+    print(f"Downloaded to {market_slug}_{outcome}_{date_str}_fills.csv.gz")
+
+if __name__ == "__main__":
+    api_key = "YOUR_API_KEY"
+    market_slug = "ramp-ipo-in-2025"
+    outcome = "YES"
+    date_str = "2025-11-16"
+    
+    download_onchain_fills(market_slug, outcome, date_str, api_key)
+```
+
+```javascript Node.js
+const axios = require('axios');
+const fs = require('fs');
+
+async function downloadOnchainFills(marketSlug, outcome, dateStr, apiKey) {
+    const url = `https://datasets.predictiondata.dev/polymarket/onchain/fills/${marketSlug}/${outcome}/${dateStr}.csv.gz`;
+    
+    const response = await axios.get(url, {
+        params: { slug: 'true', apikey: apiKey },
+        responseType: 'arraybuffer'
+    });
+    
+    const filename = `${marketSlug}_${outcome}_${dateStr}_fills.csv.gz`;
+    fs.writeFileSync(filename, response.data);
+    console.log(`Downloaded to ${filename}`);
+}
+
+(async () => {
+    const apiKey = "YOUR_API_KEY";
+    const marketSlug = "ramp-ipo-in-2025";
+    const outcome = "YES";
+    const dateStr = "2025-11-16";
+    
+    try {
+        await downloadOnchainFills(marketSlug, outcome, dateStr, apiKey);
+    } catch (error) {
+        console.error("Error downloading data:", error.message);
+    }
+})();
+```
+
+```rust Rust
+use reqwest;
+use std::fs::File;
+use std::io::Write;
+
+async fn download_onchain_fills(
+    market_slug: &str,
+    outcome: &str,
+    date_str: &str,
+    api_key: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let url = format!(
+        "https://datasets.predictiondata.dev/polymarket/onchain/fills/{}/{}/{}.csv.gz",
+        market_slug, outcome, date_str
+    );
+    
+    let client = reqwest::Client::new();
+    let response = client
+        .get(&url)
+        .query(&[("slug", "true"), ("apikey", api_key)])
+        .send()
+        .await?;
+    
+    let bytes = response.bytes().await?;
+    let filename = format!("{}_{}_{}_fills.csv.gz", market_slug, outcome, date_str);
+    
+    let mut file = File::create(&filename)?;
+    file.write_all(&bytes)?;
+    
+    println!("Downloaded to {}", filename);
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let api_key = "YOUR_API_KEY";
+    let market_slug = "ramp-ipo-in-2025";
+    let outcome = "YES";
+    let date_str = "2025-11-16";
+    
+    download_onchain_fills(market_slug, outcome, date_str, api_key).await?;
+    Ok(())
+}
+```
+
+```go Go
+package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+    "os"
+)
+
+func downloadOnchainFills(marketSlug, outcome, dateStr, apiKey string) error {
+    baseURL := fmt.Sprintf(
+        "https://datasets.predictiondata.dev/polymarket/onchain/fills/%s/%s/%s.csv.gz",
+        marketSlug, outcome, dateStr,
+    )
+    
+    params := url.Values{}
+    params.Add("slug", "true")
+    params.Add("apikey", apiKey)
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    filename := fmt.Sprintf("%s_%s_%s_fills.csv.gz", marketSlug, outcome, dateStr)
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = io.Copy(file, resp.Body)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Printf("Downloaded to %s\n", filename)
+    return nil
+}
+
+func main() {
+    apiKey := "YOUR_API_KEY"
+    marketSlug := "ramp-ipo-in-2025"
+    outcome := "YES"
+    dateStr := "2025-11-16"
+    
+    if err := downloadOnchainFills(marketSlug, outcome, dateStr, apiKey); err != nil {
+        fmt.Printf("Error downloading data: %v\n", err)
+    }
+}
+```
+
+```bash cURL
+curl -G "https://datasets.predictiondata.dev/polymarket/onchain/fills/ramp-ipo-in-2025/YES/2025-11-16.csv.gz" \
+  --data-urlencode "slug=true" \
+  --data-urlencode "apikey=YOUR_API_KEY" \
+  --output ramp-ipo-in-2025_YES_2025-11-16_fills.csv.gz
+```
+
+</CodeGroup>
 
 ### Using Token ID
 
-`http://datasets.predictiondata.dev/polymarket/onchain/fills/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY`
+<CodeGroup>
+
+```python Python
+import requests
+
+def download_onchain_fills_by_token(token_id, date_str, api_key):
+    url = f"https://datasets.predictiondata.dev/polymarket/onchain/fills/{token_id}/{date_str}.csv.gz"
+    params = {'apikey': api_key}
+    
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    
+    with open(f'{token_id}_{date_str}_fills.csv.gz', 'wb') as f:
+        f.write(response.content)
+    
+    print(f"Downloaded to {token_id}_{date_str}_fills.csv.gz")
+
+if __name__ == "__main__":
+    api_key = "YOUR_API_KEY"
+    token_id = "6535996220481600525438454491949371553057652243233032166205012948847090204871"
+    date_str = "2025-11-16"
+    
+    download_onchain_fills_by_token(token_id, date_str, api_key)
+```
+
+```javascript Node.js
+const axios = require('axios');
+const fs = require('fs');
+
+async function downloadOnchainFillsByToken(tokenId, dateStr, apiKey) {
+    const url = `https://datasets.predictiondata.dev/polymarket/onchain/fills/${tokenId}/${dateStr}.csv.gz`;
+    
+    const response = await axios.get(url, {
+        params: { apikey: apiKey },
+        responseType: 'arraybuffer'
+    });
+    
+    const filename = `${tokenId}_${dateStr}_fills.csv.gz`;
+    fs.writeFileSync(filename, response.data);
+    console.log(`Downloaded to ${filename}`);
+}
+
+(async () => {
+    const apiKey = "YOUR_API_KEY";
+    const tokenId = "6535996220481600525438454491949371553057652243233032166205012948847090204871";
+    const dateStr = "2025-11-16";
+    
+    try {
+        await downloadOnchainFillsByToken(tokenId, dateStr, apiKey);
+    } catch (error) {
+        console.error("Error downloading data:", error.message);
+    }
+})();
+```
+
+```rust Rust
+use reqwest;
+use std::fs::File;
+use std::io::Write;
+
+async fn download_onchain_fills_by_token(
+    token_id: &str,
+    date_str: &str,
+    api_key: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let url = format!(
+        "https://datasets.predictiondata.dev/polymarket/onchain/fills/{}/{}.csv.gz",
+        token_id, date_str
+    );
+    
+    let client = reqwest::Client::new();
+    let response = client
+        .get(&url)
+        .query(&[("apikey", api_key)])
+        .send()
+        .await?;
+    
+    let bytes = response.bytes().await?;
+    let filename = format!("{}_{}\_fills.csv.gz", token_id, date_str);
+    
+    let mut file = File::create(&filename)?;
+    file.write_all(&bytes)?;
+    
+    println!("Downloaded to {}", filename);
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let api_key = "YOUR_API_KEY";
+    let token_id = "6535996220481600525438454491949371553057652243233032166205012948847090204871";
+    let date_str = "2025-11-16";
+    
+    download_onchain_fills_by_token(token_id, date_str, api_key).await?;
+    Ok(())
+}
+```
+
+```go Go
+package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+    "os"
+)
+
+func downloadOnchainFillsByToken(tokenID, dateStr, apiKey string) error {
+    baseURL := fmt.Sprintf(
+        "https://datasets.predictiondata.dev/polymarket/onchain/fills/%s/%s.csv.gz",
+        tokenID, dateStr,
+    )
+    
+    params := url.Values{}
+    params.Add("apikey", apiKey)
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    filename := fmt.Sprintf("%s_%s_fills.csv.gz", tokenID, dateStr)
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = io.Copy(file, resp.Body)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Printf("Downloaded to %s\n", filename)
+    return nil
+}
+
+func main() {
+    apiKey := "YOUR_API_KEY"
+    tokenID := "6535996220481600525438454491949371553057652243233032166205012948847090204871"
+    dateStr := "2025-11-16"
+    
+    if err := downloadOnchainFillsByToken(tokenID, dateStr, apiKey); err != nil {
+        fmt.Printf("Error downloading data: %v\n", err)
+    }
+}
+```
+
+```bash cURL
+curl -G "https://datasets.predictiondata.dev/polymarket/onchain/fills/6535996220481600525438454491949371553057652243233032166205012948847090204871/2025-11-16.csv.gz" \
+  --data-urlencode "apikey=YOUR_API_KEY" \
+  --output 6535996220481600525438454491949371553057652243233032166205012948847090204871_2025-11-16_fills.csv.gz
+```
+
+</CodeGroup>
 
 ## Notes
 
