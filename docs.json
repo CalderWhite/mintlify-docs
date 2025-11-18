@@ -9,20 +9,28 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
-      "index"
-    ],
-    "groups": [
+    "tabs": [
       {
-        "group": "Datasets",
-        "pages": [
-          "datasets/overview",
+        "tab": "Documentation",
+        "groups": [
           {
-            "group": "Polymarket",
+            "group": "Introduction",
             "pages": [
-              "datasets/polymarket/order-books",
-              "datasets/polymarket/trades",
-              "datasets/polymarket/onchain-fills"
+              "index"
+            ]
+          },
+          {
+            "group": "Datasets",
+            "pages": [
+              "datasets/overview",
+              {
+                "group": "Polymarket",
+                "pages": [
+                  "datasets/polymarket/order-books",
+                  "datasets/polymarket/trades",
+                  "datasets/polymarket/onchain-fills"
+                ]
+              }
             ]
           }
         ]

@@ -1,7 +1,33 @@
 ---
-title: "predictiondata.dev"
+title: "Introduction"
 ---
 
-# Placeholder
+PredictionData.dev is the most reliable prediction market data platform. We take
+gapless data seriously, and collect all data emitted from the exchanges we
+track.
 
-Documentation coming soon.
+## Overview
+
+Markets are made available as CSV flat files for ease of use. See the datasets
+tab to read the documentation for the specific exchanges you are interested in.
+New exchanges are constantly in development. If you don't see one, ask
+calder@predictiondata.dev!
+
+## Market Discovery
+
+We employed a low-latency polling system to monitor existing markets and
+discover new markets, so that we are collecting data within 1 second of a market
+being created. Please contact calder@predictiondata.dev for enterprise feeds of
+even lower latency.
+
+## Data Collection
+
+All data is collected on redundant websockets to avoid any dataloss. Collection
+servers are colocated to exchanges to provide minimal packet loss and latency.
+
+## Data Freshness
+
+Exports of our internal database are made available through
+datasets.predictiondata.dev at 2am UTC every day. If you require faster access
+to data, please reach out to calder@predictiondata.dev.
+

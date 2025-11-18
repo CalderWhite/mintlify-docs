@@ -22,27 +22,19 @@ Incremental order book reconstructions from websocket data. Each row represents 
 
 ### Using Market Slug + Outcome
 
-```bash
-curl "http://datasets.predictiondata.dev/polymarket/books/{event-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY"
-```
+`http://datasets.predictiondata.dev/polymarket/books/{market-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY`
 
-**Example:**
-
-```bash
-curl "http://datasets.predictiondata.dev/polymarket/books/will-the-highest-temperature-in-new-york-city-be-between-50-51f-on-november-15/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY"
-```
+| Market Slug | Outcome | Date | |
+|-----------|---------|------|---|
+| ramp-ipo-in-2025 | YES | 2025-11-16 | [Download sample](http://datasets.predictiondata.dev/polymarket/books/ramp-ipo-in-2025/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY) |
 
 ### Using Token ID
 
-```bash
-curl "http://datasets.predictiondata.dev/polymarket/books/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY"
-```
+`http://datasets.predictiondata.dev/polymarket/books/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY`
 
-**Example:**
-
-```bash
-curl "http://datasets.predictiondata.dev/polymarket/books/0x1234567890abcdef/2025-11-16.csv.gz?apikey=YOUR_API_KEY"
-```
+| Token ID | Date | |
+|----------|------|---|
+| 21742633143463906290569050155826241533067272736897614950488156847949938836455 | 2025-11-16 | [Download sample](http://datasets.predictiondata.dev/polymarket/books/21742633143463906290569050155826241533067272736897614950488156847949938836455/2025-11-16.csv.gz?apikey=YOUR_API_KEY) |
 
 ## Notes
 
