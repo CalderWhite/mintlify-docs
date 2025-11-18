@@ -1,0 +1,141 @@
+---
+title: "Finding Available Files"
+---
+
+You can query available files by market slug, event slug, or asset ID. These endpoints return metadata about available data files that you can then download from the datasets API.
+
+## Base URL
+
+All endpoints use the base URL: `https://api.predictiondata.dev`
+
+## Endpoints
+
+### By Market Slug
+
+Returns all exports for a given market.
+
+```bash
+GET /v1/exports/{exchange}/markets/{slug}
+```
+
+**Example:**
+```bash
+curl "https://api.predictiondata.dev/v1/exports/polymarket/markets/will-trump-win-2024"
+```
+
+### By Market Slug and Side
+
+Returns exports for a specific side (YES or NO) of a market.
+
+```bash
+GET /v1/exports/{exchange}/markets/{slug}/{side}
+```
+
+**Parameters:**
+- `side`: Either `yes` or `no` (case-insensitive)
+
+**Example:**
+```bash
+curl "https://api.predictiondata.dev/v1/exports/polymarket/markets/will-trump-win-2024/yes"
+```
+
+### By Event Slug
+
+Returns all exports for all markets within an event.
+
+```bash
+GET /v1/exports/{exchange}/events/{slug}
+```
+
+**Example:**
+```bash
+curl "https://api.predictiondata.dev/v1/exports/polymarket/events/2024-election"
+```
+
+### By Asset ID
+
+Returns all exports for a specific asset ID.
+
+```bash
+GET /v1/exports/{exchange}/assets/{assetId}
+```
+
+**Example:**
+```bash
+curl "https://api.predictiondata.dev/v1/exports/polymarket/assets/21742633143463906290569050155826241533067272736897614950488156847949938836455"
+```
+
+## Response Format
+
+All endpoints return data grouped by export type:
+
+```json
+{
+  "exports": {
+    "books": [
+      {
+        "event_slug": "2024-election",
+        "market_slug": "will-trump-win-2024",
+        "asset_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455",
+        "is_yes_contract": true,
+        "date": "2025-11-18T00:00:00Z",
+        "export_type": "books",
+        "exchange": "polymarket",
+        "filename": "books/2025/11/18/21742633143463906290569050155826241533067272736897614950488156847949938836455.csv.gz"
+      }
+    ],
+    "trades": [...],
+    "onchain": [...]
+  },
+  "count": 150
+}
+```
+
+## Export Types
+
+- **books**: Order book snapshots (tick-level reconstructions)
+- **trades**: Trade messages from websockets
+- **onchain**: Onchain fill data from smart contracts
+
+## Using the Results
+
+Once you have the export metadata from the API response, you can download the data files using the asset ID and date.
+
+### Download by Asset ID
+
+```bash
+curl -G "http://datasets.predictiondata.dev/polymarket/{export_type}/{asset_id}/{date}.csv.gz" \
+  --data-urlencode "apikey=YOUR_API_KEY"
+```
+
+**Example:**
+```bash
+curl -G "http://datasets.predictiondata.dev/polymarket/books/21742633143463906290569050155826241533067272736897614950488156847949938836455/2025-11-18.csv.gz" \
+  --data-urlencode "apikey=YOUR_API_KEY" \
+  --output orderbook_2025-11-18.csv.gz
+```
+
+### Download by Market Slug + Outcome
+
+Alternatively, use market slug and outcome (YES/NO) instead of looking up the asset ID:
+
+```bash
+curl -G "http://datasets.predictiondata.dev/polymarket/{export_type}/{market_slug}/{outcome}/{date}.csv.gz" \
+  --data-urlencode "slug=true" \
+  --data-urlencode "apikey=YOUR_API_KEY"
+```
+
+**Example:**
+```bash
+curl -G "http://datasets.predictiondata.dev/polymarket/books/will-trump-win-2024/YES/2025-11-18.csv.gz" \
+  --data-urlencode "slug=true" \
+  --data-urlencode "apikey=YOUR_API_KEY" \
+  --output orderbook_2025-11-18.csv.gz
+```
+
+Replace:
+- `{export_type}`: `books`, `trades`, or `onchain`
+- `{asset_id}`: The asset ID from the API response
+- `{market_slug}`: The market slug
+- `{outcome}`: Either `YES` or `NO`
+- `{date}`: Date in `YYYY-MM-DD` format

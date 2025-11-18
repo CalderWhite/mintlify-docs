@@ -23,6 +23,7 @@
             "group": "Datasets",
             "pages": [
               "datasets/overview",
+              "datasets/available-files",
               {
                 "group": "Polymarket",
                 "pages": [
