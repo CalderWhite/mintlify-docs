@@ -16,9 +16,15 @@
       {
         "group": "Datasets",
         "pages": [
-          "datasets/polymarket/order-books",
-          "datasets/polymarket/trades",
-          "datasets/polymarket/onchain-fills"
+          "datasets/overview",
+          {
+            "group": "Polymarket",
+            "pages": [
+              "datasets/polymarket/order-books",
+              "datasets/polymarket/trades",
+              "datasets/polymarket/onchain-fills"
+            ]
+          }
         ]
       }
     ]
