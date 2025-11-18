@@ -1,9 +1,3 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="6" fill="url(#purpleGradient)"/>
-  <defs>
-    <radialGradient id="purpleGradient" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#6B21A8"/>
-      <stop offset="100%" stop-color="#C084FC"/>
-    </radialGradient>
-  </defs>
+<svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M.76 34.6L12.1 19.26a1 1 0 0 1 1.09-.37l11.65 3.4a1 1 0 0 0 1.17-.5L37.1.6a1 1 0 0 1 1.89.46V33a4 4 0 0 1-4 4H1.97a1.5 1.5 0 0 1-1.2-2.4z" fill="#7C3AED"/>
 </svg>
