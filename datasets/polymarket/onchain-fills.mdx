@@ -1,21 +1,22 @@
 ---
 title: "Onchain Fills"
-description: "Polymarket onchain order fills from the CTF Exchange"
+description: "Polymarket onchain order fills"
 ---
 
 ## Overview
 
-Onchain order fills from Polymarket's Conditional Token Framework (CTF) Exchange on Polygon. Each row represents a single fill event.
+Onchain order fills from Polymarket's smart contracts. This data history goes back until 2022.
+This is generated from the `OrderFilled` event, since `OrdersMatched` loses information about all the parties the orders are matched with. Data is scraped from the `CTFExchange` contract as well as the `NegRiskCTFExchange` contract.
 
 ## Columns
 
 | Column | Type | Description |
 |--------|------|-------------|
-| `block_number` | integer | Blockchain block number |
+| `block_number` | integer | Polygon block number |
 | `block_timestamp` | integer | Block timestamp in milliseconds |
-| `side` | string | Trade side: `BUY` or `SELL` (from maker's perspective) |
-| `size` | decimal | Number of contracts filled (6 decimal precision) |
-| `price` | decimal | Execution price |
+| `side` | string | Trade side: `BUY` or `SELL` |
+| `size` | decimal | Number of contracts filled |
+| `price` | decimal | Price |
 | `maker` | string | Maker address |
 | `taker` | string | Taker address |
 
@@ -23,25 +24,15 @@ Onchain order fills from Polymarket's Conditional Token Framework (CTF) Exchange
 
 ### Using Market Slug + Outcome
 
-`http://datasets.predictiondata.dev/polymarket/onchain/fills/{market-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY`
-
-| Market Slug | Outcome | Date | |
-|-----------|---------|------|---|
-| ramp-ipo-in-2025 | YES | 2025-11-16 | [Download sample](http://datasets.predictiondata.dev/polymarket/onchain/fills/ramp-ipo-in-2025/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY) |
+`https://datasets.predictiondata.dev/polymarket/onchain/fills/{market-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY`
 
 ### Using Token ID
 
 `http://datasets.predictiondata.dev/polymarket/onchain/fills/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY`
 
-| Token ID | Date | |
-|----------|------|---|
-| 21742633143463906290569050155826241533067272736897614950488156847949938836455 | 2025-11-16 | [Download sample](http://datasets.predictiondata.dev/polymarket/onchain/fills/21742633143463906290569050155826241533067272736897614950488156847949938836455/2025-11-16.csv.gz?apikey=YOUR_API_KEY) |
-
 ## Notes
 
-- Files are gzip compressed
 - Date format: `YYYY-MM-DD`
 - No need to manage Polymarket's frontend models (gamma) vs onchain CLOB token IDs
 - Prices automatically calculated for both USDC trades and outcome-outcome trades (YES vs NO)
-- Size converted from raw units (6 decimals) to actual contract count
 

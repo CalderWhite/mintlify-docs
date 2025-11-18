@@ -5,7 +5,19 @@ description: "Polymarket order book snapshots"
 
 ## Overview
 
-Incremental order book reconstructions from websocket data. Each row represents the full order book state at that timestamp.
+Tick-by-tick order book reconstructions from websocket feeds and REST data. Each
+row represents the full order book state at that timestamp.
+
+
+The orderbook is reconstructed from multiple redundant websockets to ensure zero data
+loss. Three separate datastreams are merged: `price_change` messages, `book`
+messages, and a scheduled download of all books from the REST API every 5 minutes.
+This way in the **highly unlikely** event the book becomes slightly out of sync,
+every 5 minutes it is guaranteed to be correct.
+
+If you plan on downloading high volumes of orderbook data, please reach out! We
+support bulk parquet exports which will allow you to avoid parsing text. Email:
+calder@predictiondata.dev.
 
 ## Columns
 
@@ -18,28 +30,348 @@ Incremental order book reconstructions from websocket data. Each row represents 
 | `bid_prices` | string | Comma-separated bid prices (highest to lowest) |
 | `bid_sizes` | string | Comma-separated bid sizes at each price level |
 
+## Notes
+
+- Date format: `YYYY-MM-DD`
+- Prices and sizes are comma separated string for easy parsing
+- Book snapshots merge data from multiple websockets to ensure completeness
+
 ## Fetching Data
+
+PredictionData.dev automatically joins the market slug and outcome to the asset
+id so you don't need to look up the clob token id through Polymarket's API.
 
 ### Using Market Slug + Outcome
 
-`http://datasets.predictiondata.dev/polymarket/books/{market-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY`
+<CodeGroup>
 
-| Market Slug | Outcome | Date | |
-|-----------|---------|------|---|
-| ramp-ipo-in-2025 | YES | 2025-11-16 | [Download sample](http://datasets.predictiondata.dev/polymarket/books/ramp-ipo-in-2025/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY) |
+```python Python
+import requests
+
+def download_orderbook_data(market_slug, outcome, date_str, api_key):
+    url = f"http://datasets.predictiondata.dev/polymarket/books/{market_slug}/{outcome}/{date_str}.csv.gz"
+    params = {'slug': 'true', 'apikey': api_key}
+    
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    
+    with open(f'{market_slug}_{outcome}_{date_str}.csv.gz', 'wb') as f:
+        f.write(response.content)
+    
+    print(f"Downloaded to {market_slug}_{outcome}_{date_str}.csv.gz")
+
+if __name__ == "__main__":
+    api_key = "YOUR_API_KEY"
+    market_slug = "ramp-ipo-in-2025"
+    outcome = "YES"
+    date_str = "2025-01-15"
+    
+    download_orderbook_data(market_slug, outcome, date_str, api_key)
+```
+
+```javascript Node.js
+const axios = require('axios');
+const fs = require('fs');
+
+async function downloadOrderbookData(marketSlug, outcome, dateStr, apiKey) {
+    const url = `http://datasets.predictiondata.dev/polymarket/books/${marketSlug}/${outcome}/${dateStr}.csv.gz`;
+    
+    const response = await axios.get(url, {
+        params: { slug: 'true', apikey: apiKey },
+        responseType: 'arraybuffer'
+    });
+    
+    const filename = `${marketSlug}_${outcome}_${dateStr}.csv.gz`;
+    fs.writeFileSync(filename, response.data);
+    console.log(`Downloaded to ${filename}`);
+}
+
+(async () => {
+    const apiKey = "YOUR_API_KEY";
+    const marketSlug = "ramp-ipo-in-2025";
+    const outcome = "YES";
+    const dateStr = "2025-01-15";
+    
+    try {
+        await downloadOrderbookData(marketSlug, outcome, dateStr, apiKey);
+    } catch (error) {
+        console.error("Error downloading data:", error.message);
+    }
+})();
+```
+
+```rust Rust
+use reqwest;
+use std::fs::File;
+use std::io::Write;
+
+async fn download_orderbook_data(
+    market_slug: &str,
+    outcome: &str,
+    date_str: &str,
+    api_key: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let url = format!(
+        "http://datasets.predictiondata.dev/polymarket/books/{}/{}/{}.csv.gz",
+        market_slug, outcome, date_str
+    );
+    
+    let client = reqwest::Client::new();
+    let response = client
+        .get(&url)
+        .query(&[("slug", "true"), ("apikey", api_key)])
+        .send()
+        .await?;
+    
+    let bytes = response.bytes().await?;
+    let filename = format!("{}_{}_{}.csv.gz", market_slug, outcome, date_str);
+    
+    let mut file = File::create(&filename)?;
+    file.write_all(&bytes)?;
+    
+    println!("Downloaded to {}", filename);
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let api_key = "YOUR_API_KEY";
+    let market_slug = "ramp-ipo-in-2025";
+    let outcome = "YES";
+    let date_str = "2025-01-15";
+    
+    download_orderbook_data(market_slug, outcome, date_str, api_key).await?;
+    Ok(())
+}
+```
+
+```go Go
+package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+    "os"
+)
+
+func downloadOrderbookData(marketSlug, outcome, dateStr, apiKey string) error {
+    baseURL := fmt.Sprintf(
+        "http://datasets.predictiondata.dev/polymarket/books/%s/%s/%s.csv.gz",
+        marketSlug, outcome, dateStr,
+    )
+    
+    params := url.Values{}
+    params.Add("slug", "true")
+    params.Add("apikey", apiKey)
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    filename := fmt.Sprintf("%s_%s_%s.csv.gz", marketSlug, outcome, dateStr)
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = io.Copy(file, resp.Body)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Printf("Downloaded to %s\n", filename)
+    return nil
+}
+
+func main() {
+    apiKey := "YOUR_API_KEY"
+    marketSlug := "ramp-ipo-in-2025"
+    outcome := "YES"
+    dateStr := "2025-01-15"
+    
+    if err := downloadOrderbookData(marketSlug, outcome, dateStr, apiKey); err != nil {
+        fmt.Printf("Error downloading data: %v\n", err)
+    }
+}
+```
+
+```bash cURL
+curl -G "http://datasets.predictiondata.dev/polymarket/books/ramp-ipo-in-2025/YES/2025-01-15.csv.gz" \
+  --data-urlencode "slug=true" \
+  --data-urlencode "apikey=YOUR_API_KEY" \
+  --output ramp-ipo-in-2025_YES_2025-01-15.csv.gz
+```
+
+</CodeGroup>
 
 ### Using Token ID
 
-`http://datasets.predictiondata.dev/polymarket/books/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY`
+<CodeGroup>
 
-| Token ID | Date | |
-|----------|------|---|
-| 21742633143463906290569050155826241533067272736897614950488156847949938836455 | 2025-11-16 | [Download sample](http://datasets.predictiondata.dev/polymarket/books/21742633143463906290569050155826241533067272736897614950488156847949938836455/2025-11-16.csv.gz?apikey=YOUR_API_KEY) |
+```python Python
+import requests
 
-## Notes
+def download_orderbook_data_by_token(token_id, date_str, api_key):
+    url = f"http://datasets.predictiondata.dev/polymarket/books/{token_id}/{date_str}.csv.gz"
+    params = {'apikey': api_key}
+    
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    
+    with open(f'{token_id}_{date_str}.csv.gz', 'wb') as f:
+        f.write(response.content)
+    
+    print(f"Downloaded to {token_id}_{date_str}.csv.gz")
 
-- Files are gzip compressed
-- Date format: `YYYY-MM-DD`
-- Prices and sizes are quoted as strings to preserve precision
-- Book snapshots merge data from multiple websockets to ensure completeness
+if __name__ == "__main__":
+    api_key = "YOUR_API_KEY"
+    token_id = "21742633143463906290569050155826241533067272736897614950488156847949938836455"
+    date_str = "2025-01-15"
+    
+    download_orderbook_data_by_token(token_id, date_str, api_key)
+```
+
+```javascript Node.js
+const axios = require('axios');
+const fs = require('fs');
+
+async function downloadOrderbookDataByToken(tokenId, dateStr, apiKey) {
+    const url = `http://datasets.predictiondata.dev/polymarket/books/${tokenId}/${dateStr}.csv.gz`;
+    
+    const response = await axios.get(url, {
+        params: { apikey: apiKey },
+        responseType: 'arraybuffer'
+    });
+    
+    const filename = `${tokenId}_${dateStr}.csv.gz`;
+    fs.writeFileSync(filename, response.data);
+    console.log(`Downloaded to ${filename}`);
+}
+
+(async () => {
+    const apiKey = "YOUR_API_KEY";
+    const tokenId = "21742633143463906290569050155826241533067272736897614950488156847949938836455";
+    const dateStr = "2025-01-15";
+    
+    try {
+        await downloadOrderbookDataByToken(tokenId, dateStr, apiKey);
+    } catch (error) {
+        console.error("Error downloading data:", error.message);
+    }
+})();
+```
+
+```rust Rust
+use reqwest;
+use std::fs::File;
+use std::io::Write;
+
+async fn download_orderbook_data_by_token(
+    token_id: &str,
+    date_str: &str,
+    api_key: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let url = format!(
+        "http://datasets.predictiondata.dev/polymarket/books/{}/{}.csv.gz",
+        token_id, date_str
+    );
+    
+    let client = reqwest::Client::new();
+    let response = client
+        .get(&url)
+        .query(&[("apikey", api_key)])
+        .send()
+        .await?;
+    
+    let bytes = response.bytes().await?;
+    let filename = format!("{}_{}.csv.gz", token_id, date_str);
+    
+    let mut file = File::create(&filename)?;
+    file.write_all(&bytes)?;
+    
+    println!("Downloaded to {}", filename);
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let api_key = "YOUR_API_KEY";
+    let token_id = "21742633143463906290569050155826241533067272736897614950488156847949938836455";
+    let date_str = "2025-01-15";
+    
+    download_orderbook_data_by_token(token_id, date_str, api_key).await?;
+    Ok(())
+}
+```
+
+```go Go
+package main
+
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+    "os"
+)
+
+func downloadOrderbookDataByToken(tokenID, dateStr, apiKey string) error {
+    baseURL := fmt.Sprintf(
+        "http://datasets.predictiondata.dev/polymarket/books/%s/%s.csv.gz",
+        tokenID, dateStr,
+    )
+    
+    params := url.Values{}
+    params.Add("apikey", apiKey)
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+    
+    filename := fmt.Sprintf("%s_%s.csv.gz", tokenID, dateStr)
+    file, err := os.Create(filename)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = io.Copy(file, resp.Body)
+    if err != nil {
+        return err
+    }
+    
+    fmt.Printf("Downloaded to %s\n", filename)
+    return nil
+}
+
+func main() {
+    apiKey := "YOUR_API_KEY"
+    tokenID := "21742633143463906290569050155826241533067272736897614950488156847949938836455"
+    dateStr := "2025-01-15"
+    
+    if err := downloadOrderbookDataByToken(tokenID, dateStr, apiKey); err != nil {
+        fmt.Printf("Error downloading data: %v\n", err)
+    }
+}
+```
+
+```bash cURL
+curl -G "http://datasets.predictiondata.dev/polymarket/books/21742633143463906290569050155826241533067272736897614950488156847949938836455/2025-01-15.csv.gz" \
+  --data-urlencode "apikey=YOUR_API_KEY" \
+  --output 21742633143463906290569050155826241533067272736897614950488156847949938836455_2025-01-15.csv.gz
+```
+
+</CodeGroup>
+
 

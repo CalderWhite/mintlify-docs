@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "predictiondata.dev",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#7132f5",
+    "light": "#8b5cf6",
+    "dark": "#5b21b6"
   },
   "favicon": "/favicon.svg",
   "navigation": {

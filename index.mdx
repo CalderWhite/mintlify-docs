@@ -2,9 +2,14 @@
 title: "Introduction"
 ---
 
-PredictionData.dev is the most reliable prediction market data platform. We take
+PredictionData.dev is the **most reliable** prediction market data platform. We take
 gapless data seriously, and collect all data emitted from the exchanges we
 track.
+
+There are **no rate limits** on how many requests per second you make or how
+much data you download! Our infrastructure can support **terabytes** of outbound data per second.
+If you are interested in bulk exports to make backfilling your database easier,
+reach out to calder@predictiondata.dev for daily parquet snapshots of the database!
 
 ## Overview
 
@@ -15,15 +20,14 @@ calder@predictiondata.dev!
 
 ## Market Discovery
 
-We employed a low-latency polling system to monitor existing markets and
-discover new markets, so that we are collecting data within 1 second of a market
-being created. Please contact calder@predictiondata.dev for enterprise feeds of
-even lower latency.
+We employ a low-latency polling system to discover new markets. Markets are
+being watched within 1 second of being created. Please contact
+calder@predictiondata.dev for enterprise feeds with **\<100ms** latency.
 
 ## Data Collection
 
 All data is collected on redundant websockets to avoid any dataloss. Collection
-servers are colocated to exchanges to provide minimal packet loss and latency.
+servers are colocated to exchanges to provide minimal packet loss and latency. For reference, p50 latency to Polymarket's matching engine is **\<10ms**.
 
 ## Data Freshness
 
