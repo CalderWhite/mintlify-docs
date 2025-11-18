@@ -1,0 +1,55 @@
+---
+title: "Onchain Fills"
+description: "Polymarket onchain order fills from the CTF Exchange"
+---
+
+## Overview
+
+Onchain order fills from Polymarket's Conditional Token Framework (CTF) Exchange on Polygon. Each row represents a single fill event.
+
+## Columns
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `block_number` | integer | Blockchain block number |
+| `block_timestamp` | integer | Block timestamp in milliseconds |
+| `side` | string | Trade side: `BUY` or `SELL` (from maker's perspective) |
+| `size` | decimal | Number of contracts filled (6 decimal precision) |
+| `price` | decimal | Execution price |
+| `maker` | string | Maker address |
+| `taker` | string | Taker address |
+
+## Fetching Data
+
+### Using Market Slug + Outcome
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/onchain/fills/{event-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY"
+```
+
+**Example:**
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/onchain/fills/will-the-highest-temperature-in-new-york-city-be-between-50-51f-on-november-15/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY"
+```
+
+### Using Token ID
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/onchain/fills/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY"
+```
+
+**Example:**
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/onchain/fills/0x1234567890abcdef/2025-11-16.csv.gz?apikey=YOUR_API_KEY"
+```
+
+## Notes
+
+- Files are gzip compressed
+- Date format: `YYYY-MM-DD`
+- No need to manage Polymarket's frontend models (gamma) vs onchain CLOB token IDs
+- Prices automatically calculated for both USDC trades and outcome-outcome trades (YES vs NO)
+- Size converted from raw units (6 decimals) to actual contract count
+

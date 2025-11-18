@@ -1,0 +1,53 @@
+---
+title: "Order Books"
+description: "Polymarket order book snapshots"
+---
+
+## Overview
+
+Incremental order book reconstructions from websocket data. Each row represents the full order book state at that timestamp.
+
+## Columns
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `exchange_timestamp` | integer | Exchange timestamp in milliseconds |
+| `local_timestamp` | integer | Local capture timestamp in milliseconds |
+| `ask_prices` | string | Comma-separated ask prices (lowest to highest) |
+| `ask_sizes` | string | Comma-separated ask sizes at each price level |
+| `bid_prices` | string | Comma-separated bid prices (highest to lowest) |
+| `bid_sizes` | string | Comma-separated bid sizes at each price level |
+
+## Fetching Data
+
+### Using Market Slug + Outcome
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/books/{event-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY"
+```
+
+**Example:**
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/books/will-the-highest-temperature-in-new-york-city-be-between-50-51f-on-november-15/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY"
+```
+
+### Using Token ID
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/books/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY"
+```
+
+**Example:**
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/books/0x1234567890abcdef/2025-11-16.csv.gz?apikey=YOUR_API_KEY"
+```
+
+## Notes
+
+- Files are gzip compressed
+- Date format: `YYYY-MM-DD`
+- Prices and sizes are quoted as strings to preserve precision
+- Book snapshots merge data from multiple websockets to ensure completeness
+

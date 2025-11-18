@@ -1,0 +1,52 @@
+---
+title: "Trades"
+description: "Polymarket websocket trade executions"
+---
+
+## Overview
+
+Individual trade executions captured from Polymarket's websocket feed. Each row represents a single trade.
+
+## Columns
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `exchange_timestamp` | integer | Exchange timestamp in milliseconds |
+| `local_timestamp` | integer | Local capture timestamp in milliseconds |
+| `side` | string | Trade side: `BUY` or `SELL` |
+| `size` | decimal | Number of contracts traded |
+| `price` | decimal | Execution price |
+
+## Fetching Data
+
+### Using Market Slug + Outcome
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/trades/{event-slug}/{outcome}/{date}.csv.gz?slug=true&apikey=YOUR_API_KEY"
+```
+
+**Example:**
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/trades/will-the-highest-temperature-in-new-york-city-be-between-50-51f-on-november-15/YES/2025-11-16.csv.gz?slug=true&apikey=YOUR_API_KEY"
+```
+
+### Using Token ID
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/trades/{token_id}/{date}.csv.gz?apikey=YOUR_API_KEY"
+```
+
+**Example:**
+
+```bash
+curl "http://datasets.predictiondata.dev/polymarket/trades/0x1234567890abcdef/2025-11-16.csv.gz?apikey=YOUR_API_KEY"
+```
+
+## Notes
+
+- Files are gzip compressed
+- Date format: `YYYY-MM-DD`
+- Trades are deduplicated across multiple websockets
+- Side is from the taker's perspective
+
