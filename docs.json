@@ -55,9 +55,10 @@
    ]
   },
   "integrations": {
-    "posthog": {
-      "apiKey": "phc_mUCYQOfRI8KUSJVksByt0MkJFCYwdcJfedhOfdj3TiG",
-      "sessionRecording": true
+  },
+  "scripts": [
+    {
+      "content": "(() => { const script = document.createElement('script'); script.async = true; script.src = 'https://app.posthog.com/static/array.js'; script.onload = () => { if (!window.posthog) return; window.posthog.init('phc_mUCYQOfRI8KUSJVksByt0MkJFCYwdcJfedhOfdj3TiG', { api_host: 'https://app.posthog.com', capture_pageview: true, session_recording: { maskAllInputs: false, captureScreenshots: true } }); }; document.head.appendChild(script); })();"
     }
-  }
+  ]
 }
