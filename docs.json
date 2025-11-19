@@ -53,5 +53,11 @@
      "cursor",
      "vscode"
    ]
+  },
+  "integrations": {
+    "posthog": {
+      "apiKey": "phx_10xVZSytgsb26Xjn7CHoM70LrQo1qVxWgkCySUQiFPzROVQZ",
+      "sessionRecording": true
+    }
   }
 }
